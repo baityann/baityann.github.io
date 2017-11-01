@@ -3,18 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives | Hexo测试</title>
+  <title>Unix Socket 1 | Hexo测试</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="喵喵喵喵">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo测试">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="进程通信">
+<meta name="keywords" content="socket,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unix Socket 1">
+<meta property="og:url" content="http://yoursite.com/2017/11/01/Unix-Socket-1/index.html">
 <meta property="og:site_name" content="Hexo测试">
-<meta property="og:description" content="喵喵喵喵">
+<meta property="og:description" content="进程通信">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-01T03:23:56.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo测试">
-<meta name="twitter:description" content="喵喵喵喵">
+<meta name="twitter:title" content="Unix Socket 1">
+<meta name="twitter:description" content="进程通信">
   
     <link rel="alternate" href="/atom.xml" title="Hexo测试" type="application/atom+xml">
   
@@ -63,77 +65,56 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/11/01/Unix-Socket-1/" class="archive-article-date">
-  <time datetime="2017-11-01T03:20:54.000Z" itemprop="datePublished">Nov 1</time>
+        <section id="main"><article id="post-Unix-Socket-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/01/Unix-Socket-1/" class="article-date">
+  <time datetime="2017-11-01T03:20:54.000Z" itemprop="datePublished">2017-11-01</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/01/Unix-Socket-1/">Unix Socket 1</a>
+    <h1 class="article-title" itemprop="name">
+      Unix Socket 1
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/11/01/First-Post/" class="archive-article-date">
-  <time datetime="2017-11-01T02:57:06.000Z" itemprop="datePublished">Nov 1</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/01/First-Post/">First Post</a>
-    </h1>
-  
+        <p>进程间通信方式，比socket更快，更稳定。<br><a id="more"></a></p>
+<p>Unix domain socket是一种单机通信方式。用于同一台主机上两个进程间的通信。 socket本是网络通信， unix Socket 是在socket框架上发展出来的IPC机制。 Unix Socket 比socket更加有效率， 不经过网络协议，不打包拆包，只是将应用层数据从一个进程拷贝到另外一个进程。 Unix socket 也提供面向流和面向数据包两种API接口，但是是可靠的，消息不会丢失也不会错乱。<br>Unix socket 不是绑定一个端口，而是绑定一个文件。</p>
+<p>参考[<a href="https://akaedu.github.io/book/ch37s04.html" target="_blank" rel="external">https://akaedu.github.io/book/ch37s04.html</a>]</p>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/11/01/hello-world/" class="archive-article-date">
-  <time datetime="2017-11-01T01:33:37.380Z" itemprop="datePublished">Nov 1</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/01/hello-world/">Hello World</a>
-    </h1>
-  
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/11/01/Unix-Socket-1/" data-id="cj9ghal6g0004p8gn9xrfig2j" class="article-share-link">Partager</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/socket/">socket</a></li></ul>
 
-    </header>
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/11/01/First-Post/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">First Post</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
 
 </section>
         
