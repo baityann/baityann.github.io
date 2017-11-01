@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Unix Socket 1 | 还没想好Title</title>
+  <title>安装HEXOEXO细节 | 还没想好Title</title>
   <meta name="author" content="小白">
   
-  <meta name="description" content="进程通信">
+  <meta name="description" content="喵喵喵喵">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Unix Socket 1"/>
+  <meta property="og:title" content="安装HEXOEXO细节"/>
   <meta property="og:site_name" content="还没想好Title"/>
 
   
@@ -51,19 +51,27 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-11-01T03:20:54.000Z"><a href="/2017/11/01/Unix-Socket-1/">2017-11-01</a></time>
+        <time datetime="2017-11-01T05:55:09.000Z"><a href="/2017/11/01/安装HEXOEXO细节/">2017-11-01</a></time>
       
       
   
-    <h1 class="title">Unix Socket 1</h1>
+    <h1 class="title">安装HEXOEXO细节</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>进程间通信方式，比socket更快，更稳定。<br><a id="more"></a></p>
-<p>Unix domain socket是一种单机通信方式。用于同一台主机上两个进程间的通信。 socket本是网络通信， unix Socket 是在socket框架上发展出来的IPC机制。 Unix Socket 比socket更加有效率， 不经过网络协议，不打包拆包，只是将应用层数据从一个进程拷贝到另外一个进程。 Unix socket 也提供面向流和面向数据包两种API接口，但是是可靠的，消息不会丢失也不会错乱。<br>Unix socket 不是绑定一个端口，而是绑定一个文件。</p>
-<p>参考[<a href="https://akaedu.github.io/book/ch37s04.html" target="_blank" rel="external">https://akaedu.github.io/book/ch37s04.html</a>]</p>
+        <p>搭建的时候出现了两个问题：1. 能开启服务但是网页无法显示。2.端口被占用报错。</p>
+<a id="more"></a>
+<ol>
+<li>能开启服务但是网页无法显示</li>
+</ol>
+<p>一开始安装网上的教程完全做好了，但是到浏览器上去试发现完！全！显！示！不！出！来！具体症状是，打开页面，连接很久很久，最后告诉你无法连接服务。如果是完全没有服务的话，应该一开始就不行了吧。 我的内心有点崩溃。以为是windows机子的防火墙的问题，试图在关闭防火墙的linux虚拟机上搭一个。然而使用虚拟机的还是无法显示网页。在public文件夹里找index.html页面试图打开，然而看到的是奇特的没有图片的页面。看到网上有说换一个端口，启动时就用了<code>hexo s -p 23333</code>。发现用chrom浏览器开起来还是比较慢，换了firefox浏览器。这次成功了。</p>
+<p>2.端口被占用。</p>
+<p>之前同时采取了两个措施让页面显示。问题是并不知道是哪个措施解决的问题。于是更换端口，改回默认端口。<code>hexo s</code>。然后此时发现4000端口被别的应用占用了。=_=。。。好气哦。是谁！网上查了windows下端口的占用在cmd界面中操作。新技能get！<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">netstat -ano <span class="string">| findstr 4000</span></div><div class="line"><span class="meta"># 查看4000端口占用情况</span></div><div class="line"></div><div class="line">tasklist <span class="string">| findstr [进程号]</span></div><div class="line"><span class="meta"># 查看进程名字</span></div></pre></td></tr></table></figure></p>
+<p>然后发现了 FoxitProtect.exe 。 网上查了一下，发现也有在搭建hexo同样情况的老兄。当然我最后没有杀死这个进程，因为他似乎好像自己关闭了。</p>
+<h4 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h4><p>试图用安卓手机写Hexo博客，用了Termux 更换了清华的镜像源。但是没能找到Termux的home文件夹，没能把这个文件导入手机中。如果是简单的日记的话，手机上能写然后上次github就好了。以后会继续摸索的。</p>
+<p>ps：为了写下一个文件赶出来的。</p>
 
       
     </div>
@@ -73,7 +81,7 @@
         
   
   <div class="tags">
-    <a href="/tags/socket/">socket</a>, <a href="/tags/linux/">linux</a>
+    <a href="/tags/HEXO/">HEXO</a>
   </div>
 
         
@@ -116,7 +124,7 @@
   }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<div class="fb-comments" data-href="http://yoursite.com/2017/11/01/Unix-Socket-1/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+<div class="fb-comments" data-href="http://yoursite.com/2017/11/01/安装HEXOEXO细节/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
       
   
 </section>
