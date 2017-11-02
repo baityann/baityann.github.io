@@ -109,7 +109,7 @@
 <h2 id="2-添加元素"><a href="#2-添加元素" class="headerlink" title="2. 添加元素"></a>2. 添加元素</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static inline void __list_add(struct list_head *new, struct list_head *prev, struct list_head *next) &#123;</div><div class="line">  next-&gt;prev = new;</div><div class="line">  new-&gt;next = next;</div><div class="line">  new-&gt;prev = prev;</div><div class="line">  prev-&gt;next = new;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>大概就是互相认认前后桌同学。认人是在结构之间完成的，不管结构外是什么，那么找到这个结构，是怎么知道他在那个部门里面的呢？</p>
 <h2 id="3-访问数据"><a href="#3-访问数据" class="headerlink" title="3. 访问数据"></a>3. 访问数据</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define list_entry (ptr, type, member) container_of(ptr, type, member)</div><div class="line"></div><div class="line">#define container_of(ptr, type, member) (&#123;\</div><div class="line">  const typeof(((type *)0)-&gt;member)*__mptr = (ptr); \</div><div class="line">  (type *)((char *)__mptr - offsetof(type, member));&#125;)</div><div class="line"></div><div class="line">#define offsetof(TYPE, MEMBER) ((size_t) &amp;((TYPE *)0)-&gt;MEMBER)</div></pre></td></tr></table></figure>
-<p>offsetof获取TYPE类型对象中MEMBER成员的地址偏移。从0x0地址偏移到MEMBER<br>看到这里大概明白是根据地址来找到母结构的位置。<br>那么中间那一坨。把<strong>mptr转换成type内部的member，把ptr指针赋予</strong>mptr。就是说让<strong>mptr是一个在type内部的member类型。<br>第二行返回</strong>mptr减去偏移量，这样就获得了结构的地址。</p>
+<p>offsetof获取TYPE类型对象中MEMBER成员的地址偏移。从0x0地址偏移到MEMBER<br>看到这里大概明白是根据地址来找到母结构的位置。<br>那么中间那一坨。把__mptr转换成type内部的member，把ptr指针赋予__mptr。就是说让__mptr成为，一个在type内部的，member类型。<br>第二行返回__mptr减去偏移量，这样就获得了结构的地址。</p>
 
       
     </div>
