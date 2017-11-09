@@ -6,7 +6,7 @@
   <title>linux 内核里的链表 | 还没想好Title</title>
   <meta name="author" content="小白">
   
-  <meta name="description" content="喵喵喵喵">
+  <meta name="description" content="没什么想说的。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -67,7 +67,7 @@
 <blockquote>
 <p>有没有适合HEXO的好的markdown编辑器啊！！然而我好像关闭了评论，并没有什么用</p>
 </blockquote>
-<p>现在对这个链表的理解是，它是一种锁链，一种钩子，不是一个标准插座，他并不关心前后的锁链是否是同一种类型的结构，而把他们串联起来。</p>
+<p>现在对这个链表的理解是，它是一种锁链，一种钩子，不是一个标准插座，<del>他并不关心前后的锁链是否是同一种类型的结构，</del> （吃掉，不是这样的，节点需要是同一种结构的）,而把他们串联起来。</p>
 <p><a href="http://blog.csdn.net/wenqian1991/article/details/44515713" target="_blank" rel="external">这篇似乎是源码阅读</a></p>
 <h1 id="1-使用"><a href="#1-使用" class="headerlink" title="1.使用"></a>1.使用</h1><p>先写如何使用简单的实现，然后再研究源码。</p>
 <h2 id="1-1-建立链表"><a href="#1-1-建立链表" class="headerlink" title="1.1 建立链表"></a>1.1 建立链表</h2><ol>
@@ -108,8 +108,16 @@
 <p>比较好奇的是，这个双向链表如何无视数据的结构实现不同结构的串联的。</p>
 <h2 id="2-添加元素"><a href="#2-添加元素" class="headerlink" title="2. 添加元素"></a>2. 添加元素</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static inline void __list_add(struct list_head *new, struct list_head *prev, struct list_head *next) &#123;</div><div class="line">  next-&gt;prev = new;</div><div class="line">  new-&gt;next = next;</div><div class="line">  new-&gt;prev = prev;</div><div class="line">  prev-&gt;next = new;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>大概就是互相认认前后桌同学。认人是在结构之间完成的，不管结构外是什么，那么找到这个结构，是怎么知道他在那个部门里面的呢？</p>
-<h2 id="3-访问数据"><a href="#3-访问数据" class="headerlink" title="3. 访问数据"></a>3. 访问数据</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define list_entry (ptr, type, member) container_of(ptr, type, member)</div><div class="line"></div><div class="line">#define container_of(ptr, type, member) (&#123;\</div><div class="line">  const typeof(((type *)0)-&gt;member)*__mptr = (ptr); \</div><div class="line">  (type *)((char *)__mptr - offsetof(type, member));&#125;)</div><div class="line"></div><div class="line">#define offsetof(TYPE, MEMBER) ((size_t) &amp;((TYPE *)0)-&gt;MEMBER)</div></pre></td></tr></table></figure>
-<p>offsetof获取TYPE类型对象中MEMBER成员的地址偏移。从0x0地址偏移到MEMBER<br>看到这里大概明白是根据地址来找到母结构的位置。<br>那么中间那一坨。把__mptr转换成type内部的member，把ptr指针赋予__mptr。就是说让__mptr成为，一个在type内部的，member类型。<br>第二行返回__mptr减去偏移量，这样就获得了结构的地址。</p>
+<h2 id="3-访问数据"><a href="#3-访问数据" class="headerlink" title="3. 访问数据"></a>3. 访问数据</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define list_entry (ptr, type, member) \</div><div class="line"> container_of(ptr, type, member)</div><div class="line"></div><div class="line">#define container_of(ptr, type, member) (&#123;\</div><div class="line">  const typeof(((type *)0)-&gt;member)*__mptr = (ptr); \</div><div class="line">  (type *)((char *)__mptr - offsetof(type, member));&#125;)</div><div class="line"></div><div class="line">#define offsetof(TYPE, MEMBER) ((size_t) &amp;((TYPE *)0)-&gt;MEMBER)</div></pre></td></tr></table></figure>
+<p>offsetof获取TYPE类型对象中MEMBER成员的地址偏移。从0x0地址偏移到MEMBER<br>看到这里大概明白是根据地址来找到母结构的位置。<br>那么中间那一坨。把__mptr转换成type内部的member，把ptr指针赋予__mptr。就是说让__mptr成为，一个在type内部的，member类型常量指针。不过一般member是<code>struct list_head</code> 类型的。<br>第二行返回一个type类型的指针，指向位置是__mptr减去偏移量，这样就获得了指向结构type的一个指针。</p>
+<h2 id="4-遍历列表"><a href="#4-遍历列表" class="headerlink" title="4. 遍历列表"></a>4. 遍历列表</h2><p>放飞自我，开始自己读源码。<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define list_for_each_entry(pos, head, member)				\</div><div class="line">truefor (pos = list_entry((head)-&gt;next, typeof(*pos), member);	\</div><div class="line">true     &amp;pos-&gt;member != (head);					\</div><div class="line">true     pos = list_entry(pos-&gt;member.next, typeof(*pos), member))</div></pre></td></tr></table></figure></p>
+<p>这个宏是生成一个循环结构，pos 的初始地址是，head中下一个节点的地址，pos看上去没有用，但是还是要用的，pos的结构必须是下一个节点的母结构体指针。所以吃掉一开始说的，无所谓节点是不是相同的结构。每个节点需要是同一种结构。<br>循环结束的条件是pos的member类型的结构不在是head。每次循环执行的操作是寻找pos下一个节点的<code>struct list_head</code>地址，然后赋予pos母结构体的地址指针。<strong>所以结论是，在遍历时pos不用初始化不用分配内存</strong>。</p>
+<p>类似的函数有 <code>list_for_each_entry_reverse(pos, head, member)</code>, <code>list_for_each_entry_continue(pos, head, member)</code></p>
+<p><code>list_for_each_entry_safe(pos, n, head, member)</code> 用于删除节点的</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#define list_for_each_entry_safe(pos, n, head, member)			\</div><div class="line">truefor (pos = list_entry((head)-&gt;next, typeof(*pos), member),	\</div><div class="line">truetruen = list_entry(pos-&gt;member.next, typeof(*pos), member);	\</div><div class="line">true     &amp;pos-&gt;member != (head); 					\</div><div class="line">true     pos = n, n = list_entry(n-&gt;member.next, typeof(*n), member))</div></pre></td></tr></table></figure>
+<p>多了一个n,  pos指向当前节点，n指向下一个节点，释放pos的内存不会丢失下一个节点的内存地址。 类似的宏有 <code>list_for_each_entry_safe_continue(pos, n, head, member)</code></p>
+<h2 id="5-拆分链表"><a href="#5-拆分链表" class="headerlink" title="5. 拆分链表"></a>5. 拆分链表</h2><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">static inline void __list_splice(struct list_head *list,</div><div class="line">truetruetruetrue struct list_head *head)</div><div class="line">&#123;</div><div class="line">truestruct list_head *first = list-&gt;next;</div><div class="line">truestruct list_head *last = list-&gt;prev;</div><div class="line">truestruct list_head *at = head-&gt;next;</div><div class="line"></div><div class="line">truefirst-&gt;prev = head;</div><div class="line">truehead-&gt;next = first;</div><div class="line"></div><div class="line">truelast-&gt;next = at;</div><div class="line">trueat-&gt;prev = last;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从list处拆分链表，头给head，head之后的链表给list之前的链表。</p>
 
       
     </div>
@@ -129,12 +137,6 @@
   </div>
 </article>
 
-
-<section id="comment">
-  <h1 class="title">留言</h1>
-
-  
-</section>
 
 </div></div>
     <aside id="sidebar" class="alignright">
@@ -156,9 +158,11 @@
   
     <li><a href="/tags/hello-world/">hello world</a><small>1</small></li>
   
-    <li><a href="/tags/linux/">linux</a><small>2</small></li>
+    <li><a href="/tags/linux/">linux</a><small>3</small></li>
   
     <li><a href="/tags/list/">list</a><small>1</small></li>
+  
+    <li><a href="/tags/lvm/">lvm</a><small>1</small></li>
   
     <li><a href="/tags/socket/">socket</a><small>1</small></li>
   

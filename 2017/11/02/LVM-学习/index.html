@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>LVM 学习 | 还没想好Title</title>
+  <meta name="author" content="小白">
+  
+  <meta name="description" content="没什么想说的。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="LVM 学习"/>
+  <meta property="og:site_name" content="还没想好Title"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="还没想好Title" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">还没想好Title</a></h1>
+  <h2><a href="/">反正要有白</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-11-02T07:25:00.000Z"><a href="/2017/11/02/LVM-学习/">2017-11-02</a></time>
+      
+      
+  
+    <h1 class="title">LVM 学习</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>发现参考文档就写得很好了，<a href="https://wiki.archlinux.org/index.php/LVM_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87" target="_blank" rel="external">参考文档</a>， 放弃。<br><a id="more"></a><br>在项目中遇到了lvm的应用，本来不是我写的东西，也不用我重新修改，直接拿来用就好了。但是为了真理还是学习一下吧。<br><a href="https://wiki.archlinux.org/index.php/LVM_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87" target="_blank" rel="external">所谓的“真理”</a>)</p>
+<h1 id="LVM是什么"><a href="#LVM是什么" class="headerlink" title="LVM是什么"></a>LVM是什么</h1><p>根据wiki，这是一种用在linux内核中的逻辑分卷管理器。全称是Logival Volume Manager。  </p>
+<p>优点是可以跨越硬盘空间分区，逻辑卷可以不用关心实际位置，允许创建快照， 保存快照，在线对逻辑卷和卷组进行创建 删除 和 调整大小 操作。<br>缺点是系统设置时要更复杂的额外步骤。其中涉及到了文件系统，稍后再写。</p>
+<p>文章中写了如何在LVM上安装Arch Linux。虽然什么也不懂，先写了再说。大概意思是如何配置lvm卷吧。然而我没有按照这个步骤也配置过其他卷了还拿来用了。迷。（啊，<a href="https://wiki.archlinux.org" target="_blank" rel="external">archlinux</a> 这个网站好棒！wiki写得很详细）</p>
+<h1 id="在LVM上安装Arch-Linux"><a href="#在LVM上安装Arch-Linux" class="headerlink" title="在LVM上安装Arch Linux"></a>在LVM上安装Arch Linux</h1><p>在创建分区和创建文件系统之间创建LVM卷。</p>
+<h2 id="1-创建物理卷"><a href="#1-创建物理卷" class="headerlink" title="1. 创建物理卷"></a>1. 创建物理卷</h2><p><code>lvmdiskscan</code> 查看可以用作物理卷的设备</p>
+<p><code>pvcreate DEVICE</code>在列出的设备上创建物理卷</p>
+<p><code>pvdisplay</code>查看已经创建好的物理卷</p>
+<p><code>pvcreate --datatlignment lm /dev/sda</code>用于对齐（alignment）未格式化的，且擦除快（erase block）小于1M的SSD。</p>
+<h2 id="2-创建卷组"><a href="#2-创建卷组" class="headerlink" title="2. 创建卷组"></a>2. 创建卷组</h2><p><code>vgcreate &lt;volume_group&gt; &lt;physical_volume&gt;</code> 在物理卷上创建volume_group</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">vgextend &lt;volume_group&gt; &lt;physical_volume&gt;</div><div class="line">vgextend &lt;volume_group&gt; &lt;another_physical_volume&gt;</div><div class="line">```  </div><div class="line"></div><div class="line">`vgdisplay` 查看卷组</div><div class="line"></div><div class="line">### 或者也可以 一步创建</div><div class="line"></div><div class="line">`vgcreate &lt;volume_group&gt; &lt;volume1&gt; &lt;volume2&gt;`</div><div class="line"></div><div class="line">## 3. 创建逻辑卷</div><div class="line"></div><div class="line">`lvcreate -L &lt;size&gt; &lt;volume_group&gt; -n &lt;logical_volume&gt; `</div><div class="line"></div><div class="line">该逻辑卷创建完后，你就可以通过`/dev/mapper/Volgroup00-lvolhome`或`/dev/VolGroup00/lvolhome`来访问它。与卷组命名类似，你可以按你的需要将逻辑卷命名。</div><div class="line"></div><div class="line">你可以指定一个或多个物理卷来限制LVM分配数据空间的位置。比如你希望在较小的SSD硬盘上创建根文件系统，并在较慢的机械硬盘上创建家目录卷，仅需把物理卷设备加入到命令中，例如：</div><div class="line"></div><div class="line">`lvcreate -L 10G VolGroup00 -n lvolhome /dev/sdc1`  </div><div class="line">如果你想让要创建的逻辑卷拥有卷组（VG）的所有未使用空间，请使用以下命令：</div><div class="line"></div><div class="line">`lvcreate -l +100%FREE  &lt;volume_group&gt; -n &lt;logical_volume&gt;</div><div class="line">`  可以通过以下命令来查看逻辑卷：</div><div class="line">`lvdisplay`  </div><div class="line">注意: 为了使上述命令能正常运行，你可能需要加载device-mapper内核模块（请使用命令`modprobe dm-mod`）。</div><div class="line">提示： 一开始可以创建小一点的逻辑卷，在卷组里留下一部分未使用空间，以后就可以根据需要再作扩展了。</div><div class="line"></div><div class="line">## 4. 建立文件系统与挂载逻辑卷</div><div class="line"></div><div class="line">现在你的逻辑卷应该已经在/dev/mapper/和/dev/YourVolumeGroupName中了。如果你无法在以上位置找到它，请使用以下命令来加载模块、并扫描与激活卷组：</div></pre></td></tr></table></figure>
+<p> modprobe dm-mod<br> vgscan<br> vgchange -ay</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">现在你可以在逻辑卷上创建文件系统并像普通分区一样挂载它了（如果你正在安装Arch linux，需要更详细的信息，请参考挂载分区）：</div></pre></td></tr></table></figure>
+<h1 id="mkfs-dev-mapper"><a href="#mkfs-dev-mapper" class="headerlink" title="mkfs. /dev/mapper/-"></a>mkfs.<fstype> /dev/mapper/<volume_group>-<logical_volume></logical_volume></volume_group></fstype></h1><h1 id="mount-dev-mapper"><a href="#mount-dev-mapper" class="headerlink" title="mount /dev/mapper/- /"></a>mount /dev/mapper/<volume_group>-<logical_volume> /<mountpoint></mountpoint></logical_volume></volume_group></h1><p>```</p>
+<p>警告: 挂载点请选择你所新建的逻辑卷（例如：/dev/mapper/Volgroup00-lvolhome），不要使用逻辑卷所在的实际分区设备（即不要使用：/dev/sda2）</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/linux/">linux</a>, <a href="/tags/lvm/">lvm</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/HEXO/">HEXO</a><small>1</small></li>
+  
+    <li><a href="/tags/hello-world/">hello world</a><small>1</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>3</small></li>
+  
+    <li><a href="/tags/list/">list</a><small>1</small></li>
+  
+    <li><a href="/tags/lvm/">lvm</a><small>1</small></li>
+  
+    <li><a href="/tags/socket/">socket</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 小白
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
