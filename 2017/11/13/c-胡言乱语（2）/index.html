@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>c++ 胡言乱语（2） | 还没想好Title</title>
+  <meta name="author" content="小白">
+  
+  <meta name="description" content="没什么想说的。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="c++ 胡言乱语（2）"/>
+  <meta property="og:site_name" content="还没想好Title"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="还没想好Title" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">还没想好Title</a></h1>
+  <h2><a href="/">反正要有白</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-11-13T00:21:59.000Z"><a href="/2017/11/13/c-胡言乱语（2）/">2017-11-13</a></time>
+      
+      
+  
+    <h1 class="title">c++ 胡言乱语（2）</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>忘记带U盘了一天，补。线程,lambda函数，EINTR(interrupted system call)<br><a id="more"></a></p>
+<h1 id="C-11-线程"><a href="#C-11-线程" class="headerlink" title="C++11 线程"></a>C++11 线程</h1><ol>
+<li><p>基本用法<br><code>std::thread t(function)</code></p>
+<ol>
+<li><p>等待线程结束<br><code>t.join();</code></p>
+</li>
+<li><p>daemon 进程</p>
+</li>
+</ol>
+<p><code>t.detach()</code><br>有时候主线程早亡了，那么这个deamon线程就没有未来了。为了防止出错和线程早亡</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">t.detach();</div><div class="line">if(t.joinable())</div><div class="line">   t.join();</div></pre></td></tr></table></figure>
+<ol>
+<li>线程召唤对象</li>
+</ol>
+<p>class类型的，如果想召唤<br><code>std::thread t((MyClass()));</code></p>
+<ol>
+<li>传递参数</li>
+</ol>
+<p><code>std::thread t(function, s);</code><br>传递reference<br><code>std::thread t(function, std::ref(s));</code> 或者 <code>std::thread t(function, std::move(s));</code>  </p>
+<ol>
+<li>移动thread</li>
+</ol>
+<p>线程不能被复制， 可以被移动。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">std::thread t(function);</div><div class="line">std::thread t2 =  move(t);</div></pre></td></tr></table></figure>
+<ol>
+<li>获取线程id和数量。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">std::thread t(function);</div><div class="line">std::cout &lt;&lt; &quot;thread_id:&quot; &lt;&lt; std::this_thread::get_id(); //主线程ID</div><div class="line">std::cout &lt;&lt; &quot;thread_id:&quot; &lt;&lt; t.get_id();</div><div class="line"></div><div class="line">std::cout &lt;&lt; &quot;thread number:&quot; &lt;&lt;std::threaad::hardware_concurrency();</div></pre></td></tr></table></figure>
+<h1 id="C-lambda-function"><a href="#C-lambda-function" class="headerlink" title="C++ lambda function"></a>C++ lambda function</h1><p>匿名函数诶！<br>用lambda函数来做线程  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">std::thread t( [] () &#123;</div><div class="line"></div><div class="line">std::cout &lt;&lt; &quot;thread function&quot;;</div><div class="line"></div><div class="line">&#125; );</div></pre></td></tr></table></figure>
+<blockquote>
+<p>The lambda expression is a series of statements enclosed in braces, prefixed with [], called lambda introducer or capture specification which tells the compiler we’re creating a lambda function, in our case, taking no argument. So, in essence, we’re using <a href=""></a>{} as a task, and assigning it to our thread.</p>
+</blockquote>
+</li>
+</ol>
+<h1 id="C-interrupted-system-call-EINTR"><a href="#C-interrupted-system-call-EINTR" class="headerlink" title="C interrupted system call (EINTR)"></a>C interrupted system call (EINTR)</h1><blockquote>
+<p>适用于慢系统调用的基本规则是：当阻塞于某个慢系统调用的一个进程捕获某个信号且相应信号处理函数返回时，该系统调用可能返回一个EINTR错误。有些内核自动重启某些被中断的系统调用。”<br>在这里，慢系统调用（slow system call）在书中是指类似accept之类的引起阻塞的函数，而上文讨论过的semop函数，我想应该也是这一类的，所以当现现EINTR信号时，该系统调用被中断，并返回错误，错误号为：EINTR，我们就可以从这个错误号来重新启动我们的系统调用。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">if (accept() &lt; 0 ) &#123;</div><div class="line">  if(EINTR == errno) &#123;</div><div class="line">    continue;</div><div class="line">  &#125;</div><div class="line">  proc_err(&quot;error&quot;);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果进程里有这个长期阻塞的调用， 可能会出现这类错。需要重新调用。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/C/">C++</a><small>1</small></li>
+  
+    <li><a href="/tags/HEXO/">HEXO</a><small>1</small></li>
+  
+    <li><a href="/tags/hello-world/">hello world</a><small>1</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>3</small></li>
+  
+    <li><a href="/tags/list/">list</a><small>1</small></li>
+  
+    <li><a href="/tags/lvm/">lvm</a><small>1</small></li>
+  
+    <li><a href="/tags/socket/">socket</a><small>1</small></li>
+  
+    <li><a href="/tags/string/">string</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 小白
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

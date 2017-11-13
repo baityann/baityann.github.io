@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>First Post | 还没想好Title</title>
+  <title>安装HEXO细节 | 还没想好Title</title>
   <meta name="author" content="小白">
   
   <meta name="description" content="没什么想说的。">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="First Post"/>
+  <meta property="og:title" content="安装HEXO细节"/>
   <meta property="og:site_name" content="还没想好Title"/>
 
   
@@ -51,19 +51,27 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-11-01T02:57:06.000Z"><a href="/2017/11/01/First-Post/">2017-11-01</a></time>
+        <time datetime="2017-11-01T05:55:09.000Z"><a href="/2017/11/01/安装HEXO细节/">2017-11-01</a></time>
       
       
   
-    <h1 class="title">First Post</h1>
+    <h1 class="title">安装HEXO细节</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>除了水我还能干啥？</p>
+        <p>搭建的时候出现了两个问题：1. 能开启服务但是网页无法显示。2.端口被占用报错。</p>
 <a id="more"></a>
-<h1 id="完成！！"><a href="#完成！！" class="headerlink" title="完成！！"></a>完成！！</h1><p>用hexo搭建博客。主题什么的以后再设置吧。先把笔记慢慢push上来吧。</p>
+<ol>
+<li>能开启服务但是网页无法显示</li>
+</ol>
+<p>一开始安装网上的教程完全做好了，但是到浏览器上去试发现完！全！显！示！不！出！来！具体症状是，打开页面，连接很久很久，最后告诉你无法连接服务。如果是完全没有服务的话，应该一开始就不行了吧。 我的内心有点崩溃。以为是windows机子的防火墙的问题，试图在关闭防火墙的linux虚拟机上搭一个。然而使用虚拟机的还是无法显示网页。在public文件夹里找index.html页面试图打开，然而看到的是奇特的没有图片的页面。看到网上有说换一个端口，启动时就用了<code>hexo s -p 23333</code>。发现用chrom浏览器开起来还是比较慢，换了firefox浏览器。这次成功了。</p>
+<p>2.端口被占用。</p>
+<p>之前同时采取了两个措施让页面显示。问题是并不知道是哪个措施解决的问题。于是更换端口，改回默认端口。<code>hexo s</code>。然后此时发现4000端口被别的应用占用了。=_=。。。好气哦。是谁！网上查了windows下端口的占用在cmd界面中操作。新技能get！<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">netstat -ano | findstr 4000</div><div class="line"># 查看4000端口占用情况</div><div class="line"></div><div class="line">tasklist | findstr [进程号]</div><div class="line"># 查看进程名字</div></pre></td></tr></table></figure></p>
+<p>然后发现了 FoxitProtect.exe 。 网上查了一下，发现也有在搭建hexo同样情况的老兄。当然我最后没有杀死这个进程，因为他似乎好像自己关闭了。</p>
+<h4 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h4><p>试图用安卓手机写Hexo博客，用了Termux 更换了清华的镜像源。但是没能找到Termux的home文件夹，没能把这个文件导入手机中。如果是简单的日记的话，手机上能写然后上次github就好了。以后会继续摸索的。</p>
+<p>ps：为了写下一个文件赶出来的。</p>
 
       
     </div>
@@ -73,7 +81,7 @@
         
   
   <div class="tags">
-    <a href="/tags/hello-world/">hello world</a>
+    <a href="/tags/HEXO/">HEXO</a>
   </div>
 
         
